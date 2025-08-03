@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_role_id',
+        'nip',
+        'jabatan',
+        'unit_kerja',
+        'is_active'
     ];
 
     /**
@@ -44,5 +49,37 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relations
+    public function userRole()
+    {
+        return $this->belongsTo(UserRole::class);
+    }
+
+    public function pengajuan()
+    {
+        return $this->hasMany(Pengajuan::class);
+    }
+
+    public function approvedPengajuan()
+    {
+        return $this->hasMany(Pengajuan::class, 'approved_by');
+    }
+
+    // Helper methods
+    public function isAdmin(): bool
+    {
+        return $this->userRole?->name === 'admin';
+    }
+
+    public function isPengaju(): bool
+    {
+        return $this->userRole?->name === 'pengaju';
+    }
+
+    public function isApprover(): bool
+    {
+        return $this->userRole?->name === 'approver';
     }
 }
